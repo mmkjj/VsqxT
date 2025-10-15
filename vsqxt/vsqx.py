@@ -1,5 +1,5 @@
-from base import vVoice,monoTrack,stTrack,aux,vsTrack,mixer,masterTrack
-from setting import *
+from .base import vVoice,monoTrack,stTrack,aux,vsTrack,mixer,masterTrack
+from .setting import *
 import xml
 import xml.sax
 import xml.dom.minidom

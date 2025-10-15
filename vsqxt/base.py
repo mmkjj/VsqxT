@@ -1,4 +1,4 @@
-from setting import *
+from .setting import *
 import traceback
 
 class myError(Exception):
@@ -605,7 +605,7 @@ class VCC():
     def return_param(self):
         return [self.t,self.ID,self.v]
     def write2xml(self):
-        ccSTR=('<t>'+str(self.t)+'</t><v id="'+str(self.ID)+'">'+str(self.v)+'</v>')
+        ccSTR='<t>'+str(self.t)+'</t><v id="'+str(self.ID)+'">'+str(self.v)+'</v>'
         return ccSTR
     
 ##    for demand in root.getElementsByTagName('DEMAND'):
@@ -728,7 +728,9 @@ class vsPart():
         vnote=VNote(noteparams)
         self.VNote.append(vnote)
         #self,VNote=sorted(self.VNote)
-        
+    def InsertVCC(self, ID, value, t):
+        vcc=VCC([t,ID,value])
+        self.VCC.append(vcc)    
     def __write_VCC__(self):
         if len(self.VCC)==0:
             return ''
@@ -753,7 +755,7 @@ class vsPart():
                     '<singer>'+CHANGELINE+self.singer.write2xml()+'</singer>'+CHANGELINE+
                    self.__write_VCC__()+self.__write_VNote__()+
                    '<plane>'+str(self.plane)+'</plane>'+CHANGELINE)
-        return vsPartStr
+        return vsPartStr    
     
 
        
@@ -800,7 +802,7 @@ class vsTrack():
         for vcc in all_cc:
             if vcc.ID==ID:
                 searchedVCC.append(vcc)
-        return searchVCC
+        return searchedVCC
      
     def create_vspart(self,t='0',playTime='1920',name='NewPart',
                       comment='New Musical Part',sPlugs=[],
@@ -834,8 +836,13 @@ class vsTrack():
                 return True
         raise myError('cannot find a fitting vspart.Try to using create_vspart to create a fitting vsPart')
         
-    def create_cc(self):
-        pass
+    def create_cc(self, typ='D', value='64', t='0'):
+        for part in self.vsPart:
+            if int(part.t)<=int(t) and int(part.t+part.playTime)>=int(t):
+                part.InsertVCC(typ,value,t)
+                return True
+        raise myError('cannot find a fitting vspart.Try to using create_vspart to create a fitting vsPart')
+        
 		
         
 #eg

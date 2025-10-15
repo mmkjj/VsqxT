@@ -99,7 +99,7 @@ VSQX4.write(filename)  # 重新写成VSQX文件
 
 1. vsTrack.create_vspart() 创建一个vspart
 2. sorted(VCC)、sorted(VNote) 以各参数（音符）时间位置为基准进行排序
-3. create_cc()create_note() 向某一轨创建一个参数（音符），并把它插入到合适的part、合适的位置中
+~~3. create_cc()create_note() 向某一轨创建一个参数（音符），并把它插入到合适的part、合适的位置中~~
 4. getVCCbyID() 输入某一参数种类，返回vsPart或者vsTrack中全部该参数列表
 
 *************************

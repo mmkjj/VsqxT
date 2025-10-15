@@ -1,1 +1,1 @@
-import vsqx
+from . import vsqx
