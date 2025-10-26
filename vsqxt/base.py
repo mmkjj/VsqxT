@@ -950,7 +950,7 @@ class VNOTE():
                     accent='50',bendDep='8',bendLen='0',decay='50',
                     fallPort='0',opening='127',risePort='0',
                     vibLen='0',vibType='0',vibDep:list=[],vibRate:list=[],
-                    lock='') -> None:
+                    lock='') -> 'VNOTE':
         ## data checking:
         cls.check_all_val(t,dur,n,v,y,p,
                     accent,bendDep,bendLen,decay,
@@ -958,7 +958,7 @@ class VNOTE():
 
         nstyle = [accent,bendDep,bendLen,decay,fallPort,opening,risePort,vibLen,vibType,vibDep,vibRate]
         params = [t, dur, n, v, y, p, nstyle, lock]
-        cls(params)
+        return cls(params)
 
 class VCC():
     def __init__(self,params):
@@ -1018,7 +1018,7 @@ class VCC():
             if iv<minv or iv>maxv:
                 raise ValueError(f'{name} must be between {minv} and {maxv}, but got {iv}')
     @classmethod
-    def create(cls, t='0',ID='DYN',v='64'):
+    def create(cls, t='0',ID='DYN',v='64') -> 'VCC':
         ## data checking:
 
         cls.check_int(value=t,name='t',minv=0)
@@ -1032,6 +1032,8 @@ class VCC():
         if ID_checked in ['S']:
             cls.check_int(value=v,name='v',minv=0,maxv=24)
 
+        params = [t, ID_checked, v]
+        return cls(params)
 
 
 class sPlug():
@@ -1503,11 +1505,13 @@ class vsTrack():
         if vnote is not None and not isinstance(vnote, VNOTE):
             raise TypeError("vnote must be an instance of VNOTE class or None")
         if vnote is not None:
-            t_abs = vnote.t
-        
+            t_abs = int(vnote.t)
+            dur = int(vnote.dur)        
         else:
             VNOTE.check_int(value=t,name='t',minv=0)
-            t_abs = t
+            VNOTE.check_int(value=dur,name='dur',minv=0)
+            t_abs = int(t)
+            dur = int(dur)
             
         for part in self.vsPart:
             if int(part.t)<=int(t_abs) and int(part.t)+int(part.playTime)>=int(t_abs)+int(dur):
@@ -1525,9 +1529,17 @@ class vsTrack():
     def insert_cc(self, vcc: Union[VCC, None] = None, typ='D', value='64', t='0'):
         if vcc is not None:
             t = int(vcc.t)
+        else:
+            VCC.check_int(value=t,name='t',minv=0)
+            t = int(t)
+
         for part in self.vsPart:
             if int(part.t)<=int(t) and int(part.t)+int(part.playTime)>=int(t):
-                part.insert_vcc(typ,value,str(int(t)-int(part.t)))
+                if vcc is None:
+                    part.insert_vcc(vcc=None,ID=typ,value=value,t=str(int(t)-int(part.t)))
+                else:
+                    vcc.t = str(int(vcc.t) - int(part.t))
+                    part.insert_vcc(vcc=vcc)
                 return True
         raise myError('cannot find a fitting vspart.Try to using create_vspart to create a fitting vsPart')
            
