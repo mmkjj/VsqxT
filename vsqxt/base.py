@@ -1456,8 +1456,8 @@ class vsTrack():
      
     def create_vspart(self,t='0',playTime='1920',name='NewPart',
                       comment='New Musical Part',sPlugs=[],
-                      bStyles=[],singers=[],ccs=[],notes=[],plane=0):
-        if sPlugs==[] or bStyles==[] or singers==[]:
+                      pStyles=[],singers=[],ccs=[],notes=[],plane=0):
+        if sPlugs==[] or pStyles==[] or singers==[]:
             try:
                 vsPartInfo=self.vsPart[0]
             except IndexError:
@@ -1465,9 +1465,9 @@ class vsTrack():
                                 Try to create a part from Vocaloid or giving the params of sPlugs, bStyles and singers""")
             else:
                 if sPlugs==[]:
-                    sPlugs=vsPartInfo.sPlugs.return_param()
+                    sPlugs=vsPartInfo.sPlug.return_param()
                 if pStyles==[]:
-                    pStyles=vsPartInfo.pStyles.return_param()
+                    pStyles=vsPartInfo.pStyle.return_param()
                 if singers==[]:
                     singers=vsPartInfo.singer.return_param()
         vspart=[t,playTime,name,comment,sPlugs,pStyles,singers,ccs,notes,plane]
