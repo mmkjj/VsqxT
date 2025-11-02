@@ -130,4 +130,5 @@ dmypy.json
 
 # custom files 
 *.vsqx
-test_file.py
+test_*
+*.wav

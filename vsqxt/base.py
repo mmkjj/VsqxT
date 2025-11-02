@@ -259,7 +259,7 @@ class masterTrack():
 
         if len(self.tempo) == 0:
             raise myError("No tempo information available.")
-        if int(tempo_events[0].t) != 0:
+        if int(self.tempo[0].t) != 0:
             raise myError("First tempo event must start at t=0.")
             
         tempo_events = sorted(self.tempo, key=lambda x: int(x.t))
