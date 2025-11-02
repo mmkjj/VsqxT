@@ -1,1 +1,0 @@
-CHANGELINE = '\n'

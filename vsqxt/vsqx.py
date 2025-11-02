@@ -1,8 +1,10 @@
 from .base import vVoice,monoTrack,stTrack,aux,vsTrack,mixer,masterTrack
-from .setting import *
 import xml
-import xml.sax
+from typing import List
 import xml.dom.minidom
+import os
+
+CHANGELINE=os.linesep
 
 class VSQX4():
     
@@ -15,18 +17,17 @@ class VSQX4():
         [vender,version,vVoiceTables,mixers,masterTracks,vsTracks,monoTracks,stTracks,auxs]=params
         self.vender=vender
         self.version=version
-        
-        self.vVoiceTable=[]
+
+        self.vVoiceTable:List[vVoice] = []
         for singers in vVoiceTables:
             self.vVoiceTable.append(vVoice(singers))
         self.mixer=mixer(mixers)# Mixer实例，包括主轨、各副轨,Mono轨音量均衡等
         self.masterTrack=masterTrack(masterTracks)#主轨信息，包括曲速、节拍
-        
-        self.vsTrack=[]# vstrack信息，n个，列表形式返回
+
+        self.vsTrack:List[vsTrack] = []
         for tracks in vsTracks:
             self.vsTrack.append(vsTrack(tracks))
         
-
         self.monoTrack=monoTrack(monoTracks)#monotrack文件信息，monotrack类
         self.stTrack=stTrack(stTracks)#伴奏文件
         self.aux=aux(auxs) #文件后缀
@@ -46,7 +47,7 @@ class VSQX4():
         return s
     def write2xml(self):
         s=('<vender><![CDATA['+str(self.vender)+']]></vender>'+CHANGELINE+
-	'<version><![CDATA['+str(self.version)+']]></version>'+CHANGELINE+
+	       '<version><![CDATA['+str(self.version)+']]></version>'+CHANGELINE+
            '<vVoiceTable>'+CHANGELINE+self.__write_vVoice__()+'</vVoiceTable>'+CHANGELINE+
            '<mixer>'+CHANGELINE+self.mixer.write2xml()+'</mixer>'+CHANGELINE+
            '<masterTrack>'+CHANGELINE+self.masterTrack.write2xml()+'</masterTrack>'+CHANGELINE+
@@ -56,11 +57,14 @@ class VSQX4():
            '<aux>'+CHANGELINE+self.aux.write2xml()+'</aux>'+CHANGELINE)
         return s
 
-    def write(self,filename,mode='w'):
+    def write(self,filename,*,mode='w'):
         s=self.xmlInfo+self.vsq4Info+self.write2xml()+'</vsq4>'
         with open(filename,mode,encoding='utf-8') as f:
             f.writelines(s)
 
+    
+
+        
 #eg
 
 ##masterTrackParam=['Untitled0','New VSQ File',480,4,[[0,4,4],[9,3,4],[16,4,4],[21,3,4]],[[0,29900],[7204,12000]]]
@@ -99,7 +103,7 @@ class VSQX4():
 ##             vsTrackParam,monoEG,stTrackEG,auxEG]
 
 
-def read(filename):    
+def read(filename: str) -> VSQX4:
     dom=xml.dom.minidom.parse(filename)
     root=dom.documentElement
     
@@ -341,7 +345,6 @@ def read(filename):
     vstracks=root.getElementsByTagName('vsTrack')
     vsTrack=[]
     for vstrack in vstracks:
-        #print('+')
         singelTrack=[]
         singelTrack.append(vstrack.getElementsByTagName('tNo')[0].firstChild.data)
         try:
